@@ -7,6 +7,7 @@ import isi.shoppingCart.infrastructure.repositories.InMemoryProductRepository;
 import isi.shoppingCart.usecases.ports.CartRepository;
 import isi.shoppingCart.usecases.ports.ProductRepository;
 import isi.shoppingCart.usecases.services.AgregarProductoAlCarritoUseCase;
+import isi.shoppingCart.usecases.services.ConfirmarCompraUseCase;
 import isi.shoppingCart.usecases.services.ShoppingCartApp;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -33,11 +34,13 @@ public class MainView {
         CartRepository cartRepository = new InMemoryCartRepository(productRepository);
         AgregarProductoAlCarritoUseCase agregarProductoAlCarritoUseCase =
                 new AgregarProductoAlCarritoUseCase(productRepository, cartRepository);
+        ConfirmarCompraUseCase confirmarCompraUseCase = new ConfirmarCompraUseCase(productRepository, cartRepository);
 
         shoppingCartApp = new ShoppingCartApp(
                 productRepository,
                 cartRepository,
-                agregarProductoAlCarritoUseCase
+                agregarProductoAlCarritoUseCase,
+                confirmarCompraUseCase
         );
 
         catalogBox = new VBox(10);
@@ -81,7 +84,17 @@ public class MainView {
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
         Button confirmButton = new Button("Confirmar compra");
-        confirmButton.setOnAction(event -> showMessage("Por implementar"));
+        confirmButton.setOnAction(event -> {String message = shoppingCartApp.confirmarCompraUseCase();
+            if (message.equals("")) {
+                showError(message);
+            }else{
+                showMessage(message);
+            }
+
+            refreshCatalog();
+            refreshCart();
+           });
+
 
         VBox panel = new VBox(10);
         panel.getChildren().addAll(title, cartBox, totalLabel, confirmButton);
