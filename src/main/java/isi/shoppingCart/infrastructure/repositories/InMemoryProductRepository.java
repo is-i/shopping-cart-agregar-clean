@@ -20,10 +20,12 @@ public class InMemoryProductRepository implements ProductRepository {
         products.add(new Product(6, "Webcam", 180.0, 2));
     }
 
+    @Override
     public List<Product> findAll() {
         return Collections.unmodifiableList(products);
     }
 
+    @Override
     public Product findById(int id) {
         int i;
 
